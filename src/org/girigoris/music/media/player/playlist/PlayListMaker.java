@@ -1,6 +1,7 @@
 package org.girigoris.music.media.player.playlist;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -75,8 +76,8 @@ public class PlayListMaker extends JPanel implements ActionListener, PropertyCha
                 percent = 0;
                 //DisplayProgress displayProgress = new DisplayProgress();
                 //displayProgress.start();
-                //CopyFile copyFile = new CopyFile();
-                //copyFile.start();
+                CopyFile copyFile = new CopyFile();
+                copyFile.start();
                 log("Opening folder : " + directory.getName() + ".");
             } else {
                 log("Open command cancelled by user.");
@@ -89,17 +90,21 @@ public class PlayListMaker extends JPanel implements ActionListener, PropertyCha
     class CopyFile extends Thread implements Runnable{
         public void run(){
             File[] files = directory.listFiles();
+            musicFileData = new Object[files.length][files.length];
             musicFiles = new HashSet<String>();
 
             if ( files.length > 0){
                 log("Number of files "+files.length);
+
                 for (int x = 0; x < files.length; x++){
+                    musicFileData[x][0] = files[x].getName();
+                    musicFileData[x][1] = new Boolean(true);
                     musicFiles.add(files[x].getAbsolutePath());
-                    musicFileData[x][0] = files[x].getAbsolutePath();
-                    musicFileData[x][1] = new Boolean(false);
                 }
 
-                String[] columnNames = {"File name", "Select "};
+                String[] columnNames = {"File name", "Boolean"};
+                //DefaultTableModel model = new DefaultTableModel(musicFileData, columnNames);
+
                 JTable table = new JTable(musicFileData, columnNames);
 
                 JScrollPane scrollPane = new JScrollPane(table);
@@ -108,7 +113,7 @@ public class PlayListMaker extends JPanel implements ActionListener, PropertyCha
                 JPanel panel = new JPanel();
                 panel.add(scrollPane);
                 add(panel, BorderLayout.PAGE_START);
-                setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                setBorder(BorderFactory.createEmptyBorder(200, 200, 200, 200));
                 rootPane.removeAll();
                 rootPane.add(panel);
                 frame.add(rootPane);
